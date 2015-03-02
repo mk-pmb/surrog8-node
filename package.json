@@ -1,0 +1,32 @@
+{
+  "name": "surrog8",
+  "version": "0.2.0",
+  "description": "Surrogate pair converter with dev-friendly source code.",
+  "main": "sg8.js",
+  "bin": {
+    "surrog8-js": "./cli.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mk-pmb/surrog8-node"
+  },
+  "keywords": [
+    "unicode",
+    "surrogate",
+    "surrogate pair",
+    "surrogate pairs",
+    "high uncode characters",
+    "ucs-2",
+    "utf-32",
+    "utf-16"
+  ],
+  "author": "M.K.",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mk-pmb/surrog8-node/issues"
+  },
+  "homepage": "https://github.com/mk-pmb/surrog8-node"
+}
