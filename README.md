@@ -17,6 +17,7 @@ Finally, a Unicode surrogate pair converter…
 
 Usage
 -----
+In node.js:
 ```js
 var sg = require('surrog8'), cl = console.log,
   animals = { cow: '🐄', ram: '🐏', dog: '🐕' };
@@ -27,7 +28,25 @@ cl(String.fromCharCode(128004));  // something strange, now a cow.
 cl(sg.chr(128004));               // 🐄 (cow character)
 cl(sg(128004));                   // 🐄 (cow character)
 cl(sg.uHHHH(animals.cow));        // \uD83D\uDC04
+cl(sg.uHHHH(128004));             // \uD83D\uDC04
 ```
+
+In a browser:
+```html
+<pre id="cow">&#128004;</pre>
+<script src="../sg8.js"></script>
+<script>
+var cow = document.getElementById('cow'), sg = window.surrog8;
+cow.innerHTML += ' ' + JSON.stringify({
+  chr: sg.chr(128004),
+  ord: sg.ord(cow.innerHTML),
+  uHHHH: sg.uHHHH(cow.innerHTML),
+}, null, 2);
+</script>
+```
+  * `window.surrrog8.noConflict()`: In `window` object extender mode,
+    reset `window.surrrog8` to what it was before and return the
+    `surrrog8` function.
 
 
 License
