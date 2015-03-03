@@ -38,15 +38,15 @@ In a browser:
 <script>
 var cow = document.getElementById('cow'), sg = window.surrog8;
 cow.innerHTML += ' ' + JSON.stringify({
-  chr: sg.chr(128004),
-  ord: sg.ord(cow.innerHTML),
-  uHHHH: sg.uHHHH(cow.innerHTML),
+  chr:    sg.chr(128004),           // 🐄 (cow character)
+  ord:    sg.ord(cow.innerHTML),    // 128004
+  uHHHH:  sg.uHHHH(cow.innerHTML),  // \uD83D\uDC04
 }, null, 2);
 </script>
 ```
-  * `window.surrrog8.noConflict()`: In `window` object extender mode,
-    reset `window.surrrog8` to what it was before and return the
-    `surrrog8` function.
+  * `window.surrog8.noConflict()`: In `window` object extender mode,
+    reset `window.surrog8` to what it was before and return the
+    `surrog8` function.
 
 
 License
