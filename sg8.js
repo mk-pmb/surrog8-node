@@ -3,7 +3,7 @@
 /*globals define:true*/
 (function () {
   'use strict';
-  var sg, c, ignoreArg = Object, exported = false;
+  var sg, c, ignoreArg = Object;
   sg = function surrog8(cpnOrStr) {
     if ('string' === typeof cpnOrStr) { return sg.ord(cpnOrStr); }
     if ('number' === typeof cpnOrStr) { return sg.chr(cpnOrStr); }
@@ -60,13 +60,12 @@
   sg.moduleName = 'surrog8';
   if (('object' === typeof module) && module && module.exports) {
     module.exports = sg;
-    exported = 'cjs';
   }
   if (('function' === typeof define) && define.amd) {
     define(function amdInit(amdRequire) { ignoreArg(amdRequire); return sg; });
-    exported = 'amd';
+    return;
   }
-  if ((!exported) && ('object' === typeof window) && window.navigator) {
+  if (('object' === typeof window) && window.navigator) {
     sg.origWindowSg = window[sg.moduleName];
     sg.noConflict = function (key) {
       window[sg.moduleName] = sg.origWindowSg;
@@ -74,6 +73,5 @@
       return sg;
     };
     window[sg.moduleName] = sg;
-    exported = 'dom';
   }
 }());
