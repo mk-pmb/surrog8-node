@@ -1,7 +1,24 @@
 /* -*- coding: UTF-8, tab-width: 2 -*- */
 /*jslint indent: 2, maxlen: 80, browser: true */
 /*globals define:true*/
-(function () {
+(function unifiedExport(moduleName, factory, exports, backup) {
+  'use strict';
+  if (('function' === typeof define) && define.amd) { return define(factory); }
+  if (('object' === typeof module) && module && module.exports) {
+    module.exports = factory();
+    return;
+  }
+  if (('object' === typeof window) && window.navigator) {
+    exports = factory();
+    backup = window[moduleName];
+    exports.noConflict = function (key) {
+      window[moduleName] = backup;
+      if (key) { window[key] = exports; }
+      return exports;
+    };
+    window[moduleName] = exports;
+  }
+}('surrog8', function () {/*require, exports, module*/
   'use strict';
   var sg, c;
   sg = function surrog8(cpnOrStr) {
@@ -55,25 +72,5 @@
 
 
 
-
-  (function unifiedExport(moduleName, modExports) {
-    var ontoGlobal = true;
-    if (('function' === typeof define) && define.amd) {
-      define(function amdFactory() { return modExports; });
-      ontoGlobal = false;
-    }
-    if (('object' === typeof module) && module && module.exports) {
-      module.exports = modExports;
-      ontoGlobal = false;
-    }
-    if (ontoGlobal && ('object' === typeof window) && window.navigator) {
-      ontoGlobal = window[moduleName];
-      modExports.noConflict = function (key) {
-        window[moduleName] = ontoGlobal;
-        if (key) { window[key] = modExports; }
-        return modExports;
-      };
-      window[moduleName] = modExports;
-    }
-  }('surrog8', sg));
-}());
+  return sg;
+}));
