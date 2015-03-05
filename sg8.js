@@ -3,7 +3,7 @@
 /*globals define:true*/
 (function () {
   'use strict';
-  var sg, c, ignoreArg = Object;
+  var sg, c;
   sg = function surrog8(cpnOrStr) {
     if ('string' === typeof cpnOrStr) { return sg.ord(cpnOrStr); }
     if ('number' === typeof cpnOrStr) { return sg.chr(cpnOrStr); }
@@ -56,22 +56,24 @@
 
 
 
-
-  sg.moduleName = 'surrog8';
-  if (('object' === typeof module) && module && module.exports) {
-    module.exports = sg;
-  }
-  if (('function' === typeof define) && define.amd) {
-    define(function amdInit(amdRequire) { ignoreArg(amdRequire); return sg; });
-    return;
-  }
-  if (('object' === typeof window) && window.navigator) {
-    sg.origWindowSg = window[sg.moduleName];
-    sg.noConflict = function (key) {
-      window[sg.moduleName] = sg.origWindowSg;
-      if (key) { window[key] = sg; }
-      return sg;
-    };
-    window[sg.moduleName] = sg;
-  }
+  (function unifiedExport(moduleName, modExports) {
+    var ontoGlobal = true;
+    if (('function' === typeof define) && define.amd) {
+      define(function amdFactory() { return modExports; });
+      ontoGlobal = false;
+    }
+    if (('object' === typeof module) && module && module.exports) {
+      module.exports = modExports;
+      ontoGlobal = false;
+    }
+    if (ontoGlobal && ('object' === typeof window) && window.navigator) {
+      ontoGlobal = window[moduleName];
+      modExports.noConflict = function (key) {
+        window[moduleName] = ontoGlobal;
+        if (key) { window[key] = modExports; }
+        return modExports;
+      };
+      window[moduleName] = modExports;
+    }
+  }('surrog8', sg));
 }());

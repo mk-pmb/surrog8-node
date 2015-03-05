@@ -1,6 +1,6 @@
 {
   "name": "surrog8",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Surrogate pair converter with dev-friendly source code.",
   "main": "sg8.js",
   "bin": {
