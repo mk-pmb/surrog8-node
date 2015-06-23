@@ -81,6 +81,10 @@ $ printf '( \xF0\x9F\x9A\x9D )\n( \xF0\x9F\x9A\x9F )\n' | surrog8-js
 $ surrog8-js "$(printf '( \xF0\x9F\x9A\x9D )\n( \xF0\x9F\x9A\x9F )\n')"
 ( \uD83D\uDE9D )\u000A( \uD83D\uDE9F )
 # ^-- the trailing newline was stripped by bash.
+$ surrog8-js 'Ae=Ä Oe=Ö Ue=Ü' 'ae=ä oe=ö ue=ü' sz=ß
+Ae=\u00C4 Oe=\u00D6 Ue=\u00DC
+ae=\u00E4 oe=\u00F6 ue=\u00FC
+sz=\u00DF
 ```
 
 
