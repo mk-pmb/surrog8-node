@@ -9,13 +9,13 @@
 <pre id="cow">&#128004;</pre>
 <script src="../sg8.js"></script>
 <script>
-var cow = document.getElementById('cow'), sg = window.surrog8;
+var cow = document.getElementById('cow').innerHTML, sg = window.surrog8;
 console.log({
-  chr:    sg.chr(128004),           // '🐄' (cow character)
-  ord:    sg.ord(cow.innerHTML),    // 128004
-  uHHHH:  sg.uHHHH(cow.innerHTML),  // '\uD83D\uDC04'
-  css:    sg.css(cow.innerHTML),    // '\1f404 '
-  xml:    sg.xml(cow.innerHTML),    // '&#128004;'
+  chr:    sg.chr(128004), // '🐄' (cow character)
+  ord:    sg.ord(cow),    // 128004
+  uHHHH:  sg.uHHHH(cow),  // '\uD83D\uDC04'
+  css:    sg.css(cow),    // '\1f404 '
+  xml:    sg.xml(cow),    // '&#128004;'
 });
 </script>
 
