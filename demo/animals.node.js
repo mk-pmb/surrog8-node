@@ -1,4 +1,4 @@
-/* -*- coding: UTF-8, tab-width: 2 -*- */
+﻿/* -*- coding: UTF-8, tab-width: 2 -*- */
 /*jslint indent: 2, maxlen: 80, continue: true, unparam: true, node: true */
 'use strict';
 
