@@ -43,7 +43,6 @@ cl(sg.esc(dogEyes,      // My [o=372025]'s eyes [o=23450].
   { prefix: '[o=', base: 8, suffix: ']' }));
 cl(sg.css('\\n=\n?'));  // \5c n=\0a ? (avoid confusion with \a)
 
-
 cl('=== Advanced escaping: ===');
 cl(sg.esc(animals.bug,  { base:  16 })); // 1F41B
 cl(sg.esc(animals.bug,  { base: -16 })); // 1f41b
