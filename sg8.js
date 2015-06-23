@@ -65,10 +65,9 @@
   };
   sg.uHHHH.unsafe = /[\x00-\x1F\x7F-\uFFFF]/g;
   sg.uHHHH.escape = function (cNum) {
-    var hex;
     if ('number' !== typeof cNum) { cNum = String(cNum).charCodeAt(0); }
-    hex = cNum.toString(16).toUpperCase();
-    return ('\\u' + '0000'.substr(hex.length, 4) + hex);
+    cNum = cNum.toString(16).toUpperCase();
+    return ('\\u' + '0000'.substr(cNum.length, 4) + cNum);
   };
 
 
