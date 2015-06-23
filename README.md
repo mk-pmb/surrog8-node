@@ -125,6 +125,7 @@ String operations for the web
     Surrogate pairs are valid single characters, but they'll be escaped
     anyway so you probably don't need to care.
     You'll rather want to catch parts of your prefix and suffix with this.
+    Also, you'll probably want to set the `g` flag on this regexp.
 * `sg.css(data)`: pre-configured `.esc` for Cascading Style Sheets.
 * `sg.xml(data)`: pre-configured `.esc` for XML or (X)HTML.
 
