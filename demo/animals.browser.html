@@ -11,9 +11,11 @@
 <script>
 var cow = document.getElementById('cow'), sg = window.surrog8;
 console.log({
-  chr: sg.chr(128004),
-  ord: sg.ord(cow.innerHTML),
-  uHHHH: sg.uHHHH(cow.innerHTML),
+  chr:    sg.chr(128004),           // '🐄' (cow character)
+  ord:    sg.ord(cow.innerHTML),    // 128004
+  uHHHH:  sg.uHHHH(cow.innerHTML),  // '\uD83D\uDC04'
+  css:    sg.css(cow.innerHTML),    // '\1f404 '
+  xml:    sg.xml(cow.innerHTML),    // '&#128004;'
 });
 </script>
 

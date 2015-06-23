@@ -61,12 +61,61 @@
 
   sg.uHHHH = function surrog8_uHHHH(str) {
     if ('number' === typeof str) { str = sg.chr(str); }
-    return String(str).replace(/[\x00-\x1F\x7F-\uFFFF]/g, sg.uHHHH.escape);
+    return String(str).replace(surrog8_uHHHH.unsafe, surrog8_uHHHH.escape);
   };
-  sg.uHHHH.escape = function (match) {
-    var cNum = match.charCodeAt(0), hex = cNum.toString(16).toUpperCase();
+  sg.uHHHH.unsafe = /[\x00-\x1F\x7F-\uFFFF]/g;
+  sg.uHHHH.escape = function (cNum) {
+    var hex;
+    if ('number' !== typeof cNum) { cNum = String(cNum).charCodeAt(0); }
+    hex = cNum.toString(16).toUpperCase();
     return ('\\u' + '0000'.substr(hex.length, 4) + hex);
   };
+
+
+  sg.lpad = function (data, minlen, padding) {
+    if (data.length >= (minlen || 0)) { return data; }
+    return ((0).toFixed(minlen).replace(/\S/g, (padding || '0')
+      ).substr(0, minlen - data.length) + data);
+  };
+
+
+  sg.srgPairRgxFrag = ('[' + sg.uHHHH.escape(c.highSrgStart) + '-' +
+                             sg.uHHHH.escape(c.highSrgEnd) + ']' +
+                       '[' + sg.uHHHH.escape(c.lowSrgStart) + '-'
+                           + sg.uHHHH.escape(c.lowSrgEnd) + ']');
+
+  sg.esc = function hexEscape(data, opts) {
+    var rgx;
+    if (!opts) { opts = {}; }
+    if ('number' === typeof data) {
+      data = data.toString(Math.abs(opts.base || 10));
+      data = ((opts.base < 0) ? data.toLowerCase() :  data.toUpperCase());
+      if (opts.minlen) { data = sg.lpad(data, opts.minlen, opts.padding); }
+      return ((opts.prefix || '') + data + (opts.suffix || ''));
+    }
+    data = String(data);
+    rgx = new RegExp(sg.srgPairRgxFrag, 'g');
+    rgx.repl = function (pair) { return sg.esc(sg.ord(pair), opts); };
+    if (opts.preEscape) { data = data.replace(opts.preEscape, rgx.repl); }
+    data = data.replace(rgx, rgx.repl);
+    data = data.replace(sg.uHHHH.unsafe, rgx.repl);
+    return data;
+  };
+
+  sg.css = function cssEscape(data) { return sg.esc(data, sg.css.opts); };
+  sg.css.opts = { prefix: '\\', base: -16, suffix: ' ', preEscape: /\\|'|"/g,
+    minlen: 2,  /* "\n" -> "\0a" avoids confusion with "\a". */
+    };
+
+  sg.xml = function xmlEscape(data) { return sg.esc(data, sg.xml.opts); };
+  sg.xml.opts = { prefix: '&#', base: 10, suffix: ';', preEscape: /[&<>'"]/g };
+
+
+
+
+
+
+
 
 
 
