@@ -36,26 +36,44 @@
   };
   c.lowSrgCnt = c.lowSrgEnd + 1 - c.lowSrgStart;
 
+
+  sg.isSurrogateChar = function (cNum) {
+    if ('string' === typeof cNum) { cNum = cNum.charCodeAt(0); }
+    if ('number' !== typeof cNum) { return false; }
+    if ((cNum >= c.highSrgStart) && (cNum <= c.highSrgEnd)) { return 1; }
+    if ((cNum >= c.lowSrgStart) && (cNum <= c.lowSrgEnd)) { return 2; }
+    return false;
+  };
+
   sg.ord = function surrog8_ord(surrogatePairStr) {
     var cNum1 = surrogatePairStr.charCodeAt(0), cNum2, codePointNumber;
-    if (cNum1 < c.highSrgStart) { return cNum1; }
-    if (cNum1 > c.highSrgEnd) { return cNum1; }
+    if (sg.isSurrogateChar(cNum1) !== 1) { return cNum1; }
     cNum2 = surrogatePairStr.charCodeAt(1);
-    if (cNum2 < c.lowSrgStart) { return cNum1; }
-    if (cNum2 > c.lowSrgEnd) { return cNum1; }
-    codePointNumber = ((cNum1 - c.highSrgStart) * c.lowSrgCnt) +
-      (cNum2 - c.lowSrgStart) + c.overFFFFh;
+    if (sg.isSurrogateChar(cNum2) !== 2) { return cNum1; }
+    /* strip their surrogate range offsets */
+    cNum1 -= c.highSrgStart;
+    cNum2 -= c.lowSrgStart;
+    /* shift the high number part into the range it represents */
+    cNum1 *= c.lowSrgCnt;
+    /* compose original CPN */
+    codePointNumber = cNum1 + cNum2 + c.overFFFFh;
     return codePointNumber;
   };
 
   sg.chr = function surrog8_chr(codePointNumber) {
-    var cNum1, cNum2;
+    var cNum1, cNum2, shifted;
     if (codePointNumber < c.overFFFFh) {
+      /* CPN is in low range so we don't need a surrogate pair. */
       return String.fromCharCode(codePointNumber);
     }
-    cNum1 = codePointNumber - c.overFFFFh;
-    cNum2 = (cNum1 % c.lowSrgCnt) + c.lowSrgStart;
-    cNum1 = Math.floor(cNum1 /  c.lowSrgCnt) + c.highSrgStart;
+    /* shift codepoint numbers to start counting in high range */
+    shifted = codePointNumber - c.overFFFFh;
+    /* split the (possibly large) code point number into smaller numbers */
+    cNum1 = Math.floor(shifted /  c.lowSrgCnt);
+    cNum2 = (shifted % c.lowSrgCnt);
+    /* add both CPN parts into surrogate range */
+    cNum1 += c.highSrgStart;
+    cNum2 += c.lowSrgStart;
     return String.fromCharCode(cNum1, cNum2);
   };
 
