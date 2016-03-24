@@ -1,5 +1,5 @@
 /* -*- coding: UTF-8, tab-width: 2 -*- */
-/*jslint indent: 2, maxlen: 80, continue: true, unparam: true, browser: true */
+/*jslint indent: 2, maxlen: 80, browser: true */
 'use strict';
 
 window.require = function (module) { return window[module]; };

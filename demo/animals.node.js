@@ -1,5 +1,5 @@
 ﻿/* -*- coding: UTF-8, tab-width: 2 -*- */
-/*jslint indent: 2, maxlen: 80, continue: true, unparam: true, node: true */
+/*jslint indent: 2, maxlen: 80, node: true */
 'use strict';
 
 var sg = require('surrog8'), cl = console.log,
