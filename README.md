@@ -104,6 +104,9 @@ Basic character operations
   This is what the CLI mode will produce as output,
   one output line per argument,
   or per input line if no arguments were given.
+* `sg.isSurrogateChar(cNum)`:
+  Return (num) `1` if the codepoint is a high surrogate (`1`),
+  (num) `2` for low surrogates, (bool) `false` if none.
 
 String operations for the web
 -----------------------------

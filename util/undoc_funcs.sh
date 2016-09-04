@@ -6,15 +6,18 @@ SELFPATH="$(readlink -m "$0"/..)"
 function undoc_funcs () {
   cd "$SELFPATH"/.. || return $?
 
-  local HAVE_DOC="$(grep -Pe '^\* `sg.' README.md)"
+  local HAVE_DOC="$(grep -Pe '^\* `sg.' -- README.md | cut -d : -f 1)"
   echo 'in readme:'
   <<<"$HAVE_DOC" nl -ba
 
-  local UNDOC='s~^\s+(sg\.\w+) = function \w*(\(.*) \{.*$~* `\1\2`~p'
+  local UNDOC='
+    /^\s+sg\.\w+Shim = function/d
+    s~^\s+(sg\.\w+) = function \w*(\(.*) \{.*$~* `\1\2`~p
+    '
   UNDOC="${UNDOC//\\w/[A-Za-z0-9_]}"
   UNDOC="$(sed -nre "$UNDOC" sg8.js | grep -vFe "$HAVE_DOC" | sort -V)"
   echo 'missing:'
-  <<<"$UNDOC" nl -ba
+  <<<"${UNDOC:-(none)}" nl -ba
 
   return 0
 }

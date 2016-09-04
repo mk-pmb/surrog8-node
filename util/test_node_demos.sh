@@ -16,6 +16,11 @@ function test_node_demos () {
   local VAR_DEFS=
   local IGNORES=
 
+  local DIFF_PROG=
+  for DIFF_PROG in {color,}diff; do
+    </dev/null "$DIFF_PROG" &>/dev/null && break
+  done
+
   for TEST_FN in *.node.js; do
     [ -f "$TEST_FN" ] || conitnue
     let TEST_CNT="$TEST_CNT+1"
@@ -31,20 +36,20 @@ function test_node_demos () {
       ' -- "$TEST_FN")"
     EXPECTED="$(sed -re '
       s~\s+// .*$~~g
-      s~^cl\(\x27(=.*=)\x27\);.*$~\1~p
+      s~^D\.chap\(\x27(.*)\x27\);.*$~\n=== \1 ===~p
       '"$VAR_DEFS"'
-      /^cl\(\S+\(/!d
+      /^cl\(\S/!d
       /\s\/{2}\-/s~^.*$~\r~
-      s~^.*\s+//=(\x22|\s+)~\r\1~
-      /\r\x22/s~\x22$~~
-      s~^\r(\s+|\x22)~~
+      s~^.*\s+//=\s+(`)~\r\1~
+      /\r`/s~`$~~
+      s~^\r`~~
       ' -- "$TEST_FN")"
     IGNORES="$(<<<"$EXPECTED" sed -nre '/^\r/=' | sed -re '
       s!$!s~^.*$~[…]~!')"
     RSLT_BFN="${TEST_FN%.js}".test
     <<<"$EXPECTED" sed -re "$IGNORES" >"$RSLT_BFN".xpt
     nodejs "$TEST_FN" | sed -re "$IGNORES" >"$RSLT_BFN".log
-    diff -sU 2 "$RSLT_BFN".{xpt,log} | tee "$RSLT_BFN".diff
+    "$DIFF_PROG" -sU 2 "$RSLT_BFN".{xpt,log} | tee "$RSLT_BFN".diff
     TEST_RV="${PIPESTATUS[0]}"
     if [ "$TEST_RV" == 0 ]; then
       rm -- "$RSLT_BFN".{xpt,log,diff}

@@ -33,6 +33,9 @@
     lowSrgStart:  0xDC00,
     lowSrgEnd:    0xDFFF,
     overFFFFh:    0x10000,
+    rxAllHighSrg: /[\uD800-\uDBFF]/g,
+    rxAllLowSrg:  /[\uDC00-\uDFFF]/g,
+    rxAllPairs:   /[\uD800-\uDBFF][\uDC00-\uDFFF]/g,
   };
   c.lowSrgCnt = c.lowSrgEnd + 1 - c.lowSrgStart;
 
@@ -45,10 +48,11 @@
     return false;
   };
 
-  sg.ord = function surrog8_ord(surrogatePairStr) {
-    var cNum1 = surrogatePairStr.charCodeAt(0), cNum2, codePointNumber;
+
+  sg.ordShim = function surrog8_ord(surrogatePairStr, pos) {
+    var cNum1 = surrogatePairStr.charCodeAt(pos), cNum2, codePointNumber;
     if (sg.isSurrogateChar(cNum1) !== 1) { return cNum1; }
-    cNum2 = surrogatePairStr.charCodeAt(1);
+    cNum2 = surrogatePairStr.charCodeAt(pos + 1);
     if (sg.isSurrogateChar(cNum2) !== 2) { return cNum1; }
     /* strip their surrogate range offsets */
     cNum1 -= c.highSrgStart;
@@ -59,9 +63,19 @@
     codePointNumber = cNum1 + cNum2 + c.overFFFFh;
     return codePointNumber;
   };
+  sg.ord = (((typeof String.prototype.codePointAt) === 'function')
+    ? function ord(s, i) { return String(s).codePointAt(i); } : sg.chrShim);
 
-  sg.chr = function surrog8_chr(codePointNumber) {
+
+  sg.chrShim = function surrog8_chr(codePointNumber) {
     var cNum1, cNum2, shifted;
+    if (arguments.length > 1) {
+      cNum1 = '';
+      for (cNum2 = 0; cNum2 < arguments.length; cNum2 += 1) {
+        cNum1 += surrog8_chr(arguments[cNum2]);
+      }
+      return cNum1;
+    }
     if (codePointNumber < c.overFFFFh) {
       /* CPN is in low range so we don't need a surrogate pair. */
       return String.fromCharCode(codePointNumber);
@@ -76,6 +90,8 @@
     cNum2 += c.lowSrgStart;
     return String.fromCharCode(cNum1, cNum2);
   };
+  sg.chr = (((typeof String.fromCodePoint) === 'function')
+    ? String.fromCodePoint.bind(String) : sg.chrShim);
 
   sg.uHHHH = function surrog8_uHHHH(str) {
     if ('number' === typeof str) { str = sg.chr(str); }
@@ -96,13 +112,8 @@
   };
 
 
-  sg.srgPairRgxFrag = ('[' + sg.uHHHH.escape(c.highSrgStart) + '-' +
-                             sg.uHHHH.escape(c.highSrgEnd) + ']' +
-                       '[' + sg.uHHHH.escape(c.lowSrgStart) + '-'
-                           + sg.uHHHH.escape(c.lowSrgEnd) + ']');
-
   sg.esc = function hexEscape(data, opts) {
-    var rgx;
+    var escFunc;
     if (!opts) { opts = {}; }
     if ('number' === typeof data) {
       data = data.toString(Math.abs(opts.base || 10));
@@ -111,11 +122,10 @@
       return ((opts.prefix || '') + data + (opts.suffix || ''));
     }
     data = String(data);
-    rgx = new RegExp(sg.srgPairRgxFrag, 'g');
-    rgx.repl = function (pair) { return sg.esc(sg.ord(pair), opts); };
-    if (opts.preEscape) { data = data.replace(opts.preEscape, rgx.repl); }
-    data = data.replace(rgx, rgx.repl);
-    data = data.replace(sg.uHHHH.unsafe, rgx.repl);
+    escFunc = function (pair) { return sg.esc(sg.ord(pair), opts); };
+    if (opts.preEscape) { data = data.replace(opts.preEscape, escFunc); }
+    data = data.replace(c.rxAllPairs, escFunc);
+    data = data.replace(sg.uHHHH.unsafe, escFunc);
     return data;
   };
 
