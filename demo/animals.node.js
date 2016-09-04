@@ -2,21 +2,14 @@
 /*jslint indent: 2, maxlen: 80, node: true */
 'use strict';
 
-var sg = require('surrog8'), cl = console.log,
+var sg = require('surrog8'), cl = console.log, D = require('../util/ndemo'),
   animals = { cow: '🐄', ram: '🐏', dog: '🐕', bug: '🐛' }, notCow,
   dingbats = { sparkles: '✨' },
-  dogEyes = 'My ' + animals.dog + "'s eyes "  + dingbats.sparkles + '.',
-  D = { chap: function (c) { cl('\n===', c, '==='); } };
-
-function valuesSortedByName(obj) {
-  return Object.keys(obj).sort().map(function (key) { return obj[key]; });
-}
-animals.all = valuesSortedByName(animals).join(' ');
-
+  dogEyes = 'My ' + animals.dog + "'s eyes "  + dingbats.sparkles + '.';
+animals.all = D.valuesSortedByName(animals).join(' ');
 
 D.chap('Console font test:');
-// let's hope your terminal font supports them
-cl(animals.all);                  //= `🐛 🐄 🐕 🐏`
+cl(animals.all);      //= `🐛 🐄 🐕 🐏`
 
 D.chap('Basic character operations:');
 cl(sg.ord(animals.cow));          //= `128004`
@@ -44,10 +37,8 @@ cl(sg.esc(128027,       { base: -16 })); //= `1f41b`
 cl(sg.css(128027));                      //= `\1f41b `
 cl(sg.xml(0x1f41b));                     //= `&#128027;`
 
-
 D.chap('Useful regexps:');
 function replAnm(rx, t) { return sg.uHHHH(animals.all.replace(rx, t)); }
-
 cl(replAnm(sg.consts.rxAllHighSrg, '^')); //= `^\uDC1B ^\uDC04 ^\uDC15 ^\uDC0F`
 cl(replAnm(sg.consts.rxAllLowSrg, '_'));  //= `\uD83D_ \uD83D_ \uD83D_ \uD83D_`
 cl(replAnm(sg.consts.rxAllPairs, 'P'));   //= `P P P P`
