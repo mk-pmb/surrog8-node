@@ -27,7 +27,8 @@
     throw new TypeError('surrog8 needs a number for chr or a string for ord.');
   };
 
-  c = sg.consts = {
+  //==BEGIN consts==
+  sg.consts = c = {
     highSrgStart: 0xD800,
     highSrgEnd:   0xDBFF,
     lowSrgStart:  0xDC00,
@@ -37,7 +38,12 @@
     rxAllLowSrg:  /[\uDC00-\uDFFF]/g,
     rxAllPairs:   /[\uD800-\uDBFF][\uDC00-\uDFFF]/g,
   };
-  c.lowSrgCnt = c.lowSrgEnd + 1 - c.lowSrgStart;
+  c.lowSrgCnt = c.lowSrgEnd + 1 - c.lowSrgStart;      // 1024 = 0x400
+  // trivia:
+  c.highSrgCnt = c.highSrgEnd + 1 - c.highSrgStart;   // 1024
+  c.maxPairCnt = c.highSrgCnt * c.lowSrgCnt;          // 1048576  = 0x100000
+  c.expansionFactor = c.maxPairCnt / c.overFFFFh;     // 16       // ^654321
+  //==ENDOF consts==
 
 
   sg.isSurrogateChar = function (cNum) {
